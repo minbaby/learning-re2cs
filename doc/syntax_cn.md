@@ -1,5 +1,5 @@
 # 语法
-
+
 [TOC]
 
 > source: http://re2c.org/manual/syntax/syntax.html
