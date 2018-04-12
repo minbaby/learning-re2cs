@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "../common/common.h"
 
 enum num_t 
 {
@@ -27,7 +28,7 @@ static enum num_t lex(const char *YYCURSOR)
         dec = [1-9][0-9]*;
         hex = '0x' [0-9a-fA-F]+;
 
-        *       { return ERR; }
+        *       { return ERR; } // 默认规则，返回错误
         bin end { return BIN; }
         oct end { return OCT; }
         dec end { return DEC; }
@@ -44,11 +45,21 @@ int main(int argc, char **argv)
 {
     for (int i = 1; i < argc; ++i) {
         switch (lexNew(argv[i])) {
-            case ERR: printf("错误\n"); break;
-            case BIN: printf("二进制\n"); break;
-            case OCT: printf("八进制\n"); break;
-            case DEC: printf("十进制\n"); break;
-            case HEX: printf("十六进制\n"); break;
+            case ERR:
+                printf("错误\n"); 
+                break;
+            case BIN:
+                printf("二进制\n");
+                break;
+            case OCT:
+                printf("八进制\n"); 
+                break;
+            case DEC:
+                printf("十进制\n");
+                break;
+            case HEX:
+                printf("十六进制\n");
+                break;
         }
     }
     return 0;
