@@ -10,20 +10,21 @@ enum num_t
     HEX  // 十六进制
 };
 
-typedef enum num_t num_t_t;
-
-// 这里原来返回是 `static num_t lex`，但是使用 vscode 的时候会提示有问题
-// 经过查资料，https://stackoverflow.com/questions/1102542/how-to-define-an-enumerated-type-enum-in-c
-// 默认使用是需要使用 enum 作为前缀的，如果不想使用的话，可以使用 typeof
-static enum num_t lex(const char *YYCURSOR)
+static num_t lex(const char *YYCURSOR)
 {
+    // YYMARKER (line 7) is needed because rules overlap:
+    // it backs up the input position of the longest successful match.
+    // Imagine we have overlapping rules "a" and "abc" and input string "abd": by the time "a" matches, there’s still a chance to match "abc", but when the lexer sees 'd', it must roll back.
+    // (You might wonder why YYMARKER is exposed at all: why not make it a local variable like yych? The reason is, all input pointers must be updated by YYFILL as explained in the Large input example.)
+    // 内置的指定名称，不能修改为其他名称。回溯用。
     const char *YYMARKER;
+
     /*!re2c
         re2c:define:YYCTYPE = char;
         re2c:yyfill:enable = 0;
 
-        end = "\x00";
-        bin = '0b' [01]+;
+        end = "\x00";           // 定义一个结束符（NULL）
+        bin = '0b' [01]+;       //  以 0b 开头，且只有01， （这个算是一个正则？），中间的空格是被忽略的，可以删掉或者有多个
         oct = "0" [0-7]*;
         dec = [1-9][0-9]*;
         hex = '0x' [0-9a-fA-F]+;
@@ -36,15 +37,10 @@ static enum num_t lex(const char *YYCURSOR)
     */
 }
 
-static num_t_t lexNew(const char *YYCURSOR)
-{
-    return lex(YYCURSOR);
-}
-
 int main(int argc, char **argv)
 {
     for (int i = 1; i < argc; ++i) {
-        switch (lexNew(argv[i])) {
+        switch (lex(argv[i])) {
             case ERR:
                 printf("错误\n"); 
                 break;

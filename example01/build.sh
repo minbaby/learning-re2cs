@@ -1,4 +1,14 @@
-rm ./integers.out
-re2c -o integers.cc integers.re
-g++ -o integers.out integers.cc
-./integers.out 123 0xfF 010 0B101 ?
+NAME="integers"
+
+rm ./$NAME.out
+re2c -o $NAME.cc $NAME.re
+g++ -o $NAME.out $NAME.cc
+
+
+DATA="123 0x121 0b1212 010 0B101"
+
+for X in $DATA;
+do
+    echo "\nTest $X"
+    ./$NAME.out $X
+done
