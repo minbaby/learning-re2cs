@@ -2,15 +2,14 @@
 #include <strings.h>
 #include <string.h>
 
+// 告诉 re2c 生成 `#define YYMAXFILL n`
 /*!max:re2c*/
 
 struct input_t {
     size_t len;
     char *str;
 
-    input_t(const char *s)
-            : len(strlen(s))
-            , str(new char[len + YYMAXFILL])
+    input_t(const char *s) : len(strlen(s)), str(new char[len + YYMAXFILL])
     {
         memcpy(str, s, len);
         memset(str + len, 'a', YYMAXFILL);
